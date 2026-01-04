@@ -2,9 +2,19 @@
 //  sum each half in a separate thread.
 //  Do not allocate any additional memory!
 use std::thread;
+use std::thread::spawn;
 
 pub fn sum(slice: &'static [i32]) -> i32 {
-    todo!()
+    let middle = slice.len() / 2;
+    let (left, right) = slice.split_at(middle);
+    let left_sum = spawn(|| {
+        left.iter().sum::<i32>()
+    });
+    let right_sum = spawn(|| {
+        right.iter().sum::<i32>()
+    });
+
+    left_sum.join().unwrap() + right_sum.join().unwrap()
 }
 
 #[cfg(test)]
