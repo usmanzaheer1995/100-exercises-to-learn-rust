@@ -3,7 +3,15 @@
 //  Don't perform any heap allocation. Don't leak any memory.
 
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+    let middle = v.len() / 2;
+    let (left, right) = v.split_at(middle);
+
+    std::thread::scope(|s| {
+        let left_sum = s.spawn(|| left.iter().sum::<i32>()).join();
+        let right_sum = s.spawn(|| right.iter().sum::<i32>()).join();
+
+        left_sum.unwrap() + right_sum.unwrap()
+    })
 }
 
 #[cfg(test)]
